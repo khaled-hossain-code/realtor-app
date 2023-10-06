@@ -42,7 +42,7 @@ model Home {
   propertyType        PropertyType
   created_at          DateTime     @default(now())
   updated_at          DateTime     @updatedAt
-  Image               Image[]
+  images              Image[]
   realtor_id          Int
   realtor             User         @relation(fields: [realtor_id], references: [id])
   messages            Message[]
