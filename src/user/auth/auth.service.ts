@@ -20,7 +20,10 @@ interface SigninParams {
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async signup({ email, password, name, phone }: SignupParams) {
+  async signup(
+    { email, password, name, phone }: SignupParams,
+    userType: UserType,
+  ) {
     const userExists = await this.prismaService.user.findUnique({
       where: {
         email,
@@ -37,7 +40,7 @@ export class AuthService {
         password: hashedPassword,
         email,
         phone,
-        user_type: UserType.BUYER,
+        user_type: userType,
       },
     });
 
@@ -75,5 +78,11 @@ export class AuthService {
         expiresIn: 3600000,
       },
     );
+  }
+
+  generateProductKey(email: string, userType: UserType) {
+    const text = `${email}-${userType}-${process.env.PRODUCT_KEY_SECRET}`;
+
+    return bcrypt.hash(text, 10);
   }
 }
