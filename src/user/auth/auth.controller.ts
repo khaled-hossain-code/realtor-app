@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
+  NotFoundException,
   Param,
   ParseEnumPipe,
   Post,
@@ -11,6 +13,7 @@ import { AuthService } from './auth.service';
 import { GenerateProductKeyDto, SigninDto, SignupDto } from '../dtos/auth.dto';
 import { UserType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { User } from '../decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -48,5 +51,14 @@ export class AuthController {
   @Post('/key')
   generateProductKey(@Body() { email, userType }: GenerateProductKeyDto) {
     return this.authService.generateProductKey(email, userType);
+  }
+
+  @Get('/me')
+  me(@User() user) {
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
   }
 }
