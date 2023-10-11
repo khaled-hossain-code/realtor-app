@@ -18,8 +18,10 @@ import { PropertyType } from '@prisma/client';
 import { User } from 'src/user/decorators/user.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { TransformInterceptor } from 'src/common/interceptors/transform/transform.interceptor';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 @Controller('home')
+@ApiTags('Home')
 @UseInterceptors(TransformInterceptor)
 export class HomeController {
   constructor(private readonly homeService: HomeService) {}
@@ -49,6 +51,7 @@ export class HomeController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id', description: 'Home ID', type: 'number' })
   getHome(@Param('id', ParseIntPipe) id: number) {
     return this.homeService.getHomeById(id);
   }
