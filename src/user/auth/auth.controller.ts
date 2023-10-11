@@ -14,7 +14,14 @@ import { GenerateProductKeyDto, SigninDto, SignupDto } from '../dtos/auth.dto';
 import { UserType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../decorators/user.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiHeader,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -46,6 +53,13 @@ export class AuthController {
   }
 
   @Post('/signin')
+  @ApiResponse({
+    status: 200,
+    description: 'User signed in successfully',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is forbidden',
+  })
   signin(@Body() body: SigninDto) {
     return this.authService.signin(body);
   }
@@ -56,6 +70,16 @@ export class AuthController {
   }
 
   @Get('/me')
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+    schema: {
+      type: 'string',
+      default: 'Bearer ',
+    },
+  })
   me(@User() user) {
     if (!user) {
       throw new NotFoundException();

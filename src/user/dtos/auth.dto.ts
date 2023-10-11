@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { UserType } from '@prisma/client';
 import {
   IsEmail,
@@ -34,10 +35,20 @@ export class SignupDto {
 
 export class SigninDto {
   @IsEmail()
+  @ApiProperty({
+    description: 'The email address of the user.',
+    example: 'john.doe@example.com',
+    required: true,
+  })
   email: string;
 
   @IsString()
   @MinLength(5)
+  @ApiProperty({
+    description: 'The password the user.',
+    example: 'asdf1234',
+    required: true,
+  })
   password: string;
 }
 

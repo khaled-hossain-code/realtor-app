@@ -27,6 +27,10 @@ async function bootstrap() {
     .setDescription('The realtor API description')
     .setVersion('1.0')
     .addTag('realtor')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'Token' },
+      'Authorization',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
