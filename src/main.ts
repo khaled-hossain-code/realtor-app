@@ -6,7 +6,9 @@ import { LoggerMiddleware } from './common/middlewares/logger/logger.middleware'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: process.env.PRODUCTION ? ['error', 'warn', 'debug'] : undefined,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

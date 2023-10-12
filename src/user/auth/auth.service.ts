@@ -72,7 +72,6 @@ export class AuthService {
   }
 
   private generateJWT(id: number, name: string) {
-    console.log(this.configService.get<string>('JSON_TOKEN_KEY'));
     return jwt.sign(
       {
         name,

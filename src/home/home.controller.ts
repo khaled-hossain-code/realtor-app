@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Post,
@@ -24,10 +25,11 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 @ApiTags('Home')
 @UseInterceptors(TransformInterceptor)
 export class HomeController {
+  private readonly logger = new Logger(HomeController.name);
   constructor(private readonly homeService: HomeService) {}
 
   @Get()
-  getHomes(
+  async getHomes(
     @Query('city') city?: string,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
@@ -47,7 +49,11 @@ export class HomeController {
       ...(propertyType && { propertyType }),
     };
 
-    return this.homeService.getHomes(filters);
+    this.logger.log('Hit the get home route');
+    const homes = await this.homeService.getHomes(filters);
+    this.logger.debug(`Found ${homes.length} homes`);
+
+    return homes;
   }
 
   @Get(':id')

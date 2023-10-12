@@ -28,6 +28,24 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('google')
+  async handleGoogleSignIn(@Body() body: { accessToken: string }) {
+    const googleApiUrl = 'https://www.googleapis.com/oauth2/v3/tokeninfo';
+
+    const response = await fetch(
+      `${googleApiUrl}?access_token=${body.accessToken}`,
+    );
+
+    const userData = await response.json();
+
+    // Use userData in your application
+    console.log('User data from Google:', userData);
+
+    // You can perform additional actions, such as creating a user in your database
+
+    return { message: 'Google Sign-In handled successfully' };
+  }
+
   @Post('/signup/:userType')
   async signup(
     @Body() body: SignupDto,
