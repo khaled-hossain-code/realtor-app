@@ -1,9 +1,8 @@
-import { ConflictException, HttpException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { UserType } from '@prisma/client';
-import * as jwt from 'jsonwebtoken';
-import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 interface SignupParams {
   name: string;
@@ -12,16 +11,11 @@ interface SignupParams {
   password: string;
 }
 
-interface SigninParams {
-  email: string;
-  password: string;
-}
-
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signup(
@@ -51,7 +45,7 @@ export class AuthService {
     return await this.generateJWT(user.id, name);
   }
 
-  async signin({ email, password }: SigninParams) {
+  async validateUser(email: string, password: string): Promise<any> {
     const user = await this.prismaService.user.findUnique({
       where: {
         email,
@@ -59,29 +53,31 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new HttpException('invalid credentials', 400);
+      return null;
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      throw new HttpException('invalid credentials', 400);
+      return null;
     }
 
-    return this.generateJWT(user.id, user.name);
+    return user;
   }
 
-  private generateJWT(id: number, name: string) {
-    return jwt.sign(
-      {
-        name,
+  async validateUserById(id: number) {
+    return await this.prismaService.user.findUnique({
+      where: {
         id,
       },
-      this.configService.get<string>('JSON_TOKEN_KEY'),
-      {
-        expiresIn: 3600000,
-      },
-    );
+    });
+  }
+
+  generateJWT(id: number, name: string) {
+    return this.jwtService.sign({
+      username: name,
+      sub: id,
+    });
   }
 
   generateProductKey(email: string, userType: UserType) {

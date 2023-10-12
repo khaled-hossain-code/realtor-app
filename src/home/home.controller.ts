@@ -10,14 +10,12 @@ import {
   Put,
   Query,
   UnauthorizedException,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
 import { CreateHomeDto, HomeResponseDto, UpdateHomeDto } from './dto/home.Dto';
 import { PropertyType } from '@prisma/client';
 import { User } from 'src/user/decorators/user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { TransformInterceptor } from 'src/common/interceptors/transform/transform.interceptor';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
@@ -62,7 +60,6 @@ export class HomeController {
     return this.homeService.getHomeById(id);
   }
 
-  @UseGuards(AuthGuard)
   @Post()
   createHome(@Body() body: CreateHomeDto, @User() user) {
     return user;

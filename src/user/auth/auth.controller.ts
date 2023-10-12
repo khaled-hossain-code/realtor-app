@@ -7,21 +7,22 @@ import {
   Param,
   ParseEnumPipe,
   Post,
-  UnauthorizedException,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GenerateProductKeyDto, SigninDto, SignupDto } from '../dtos/auth.dto';
+import { GenerateProductKeyDto, SignupDto } from '../dtos/auth.dto';
 import { UserType } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../decorators/user.decorator';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiHeader,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -70,7 +71,8 @@ export class AuthController {
     return this.authService.signup(body, userType);
   }
 
-  @Post('/signin')
+  @Post('/login')
+  @UseGuards(AuthGuard('local'))
   @ApiResponse({
     status: 200,
     description: 'User signed in successfully',
@@ -78,8 +80,11 @@ export class AuthController {
   @ApiForbiddenResponse({
     description: 'User is forbidden',
   })
-  signin(@Body() body: SigninDto) {
-    return this.authService.signin(body);
+  login(@Request() { user }) {
+    return {
+      userId: user.id,
+      token: this.authService.generateJWT(user.id, user.name),
+    };
   }
 
   @Post('/key')
@@ -98,6 +103,7 @@ export class AuthController {
       default: 'Bearer ',
     },
   })
+  @UseGuards(AuthGuard('jwt'))
   me(@User() user) {
     if (!user) {
       throw new NotFoundException();

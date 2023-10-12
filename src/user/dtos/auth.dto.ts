@@ -33,26 +33,6 @@ export class SignupDto {
   @IsNotEmpty()
   productKey?: string;
 }
-
-export class SigninDto {
-  @IsEmail()
-  @ApiProperty({
-    description: 'The email address of the user.',
-    example: 'john.doe@example.com',
-    required: true,
-  })
-  email: string;
-
-  @IsString()
-  @Length(5, 15, { message: 'password has to be between 5 & 15 characters' })
-  @ApiProperty({
-    description: 'The password the user.',
-    example: 'asdf1234',
-    required: true,
-  })
-  password: string;
-}
-
 export class GenerateProductKeyDto {
   @IsEmail()
   email: string;

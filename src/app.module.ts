@@ -8,6 +8,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UserInterceptor } from './user/interceptors/user.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import customConfig from './config/custom.config';
+import { AuthModule } from './user/auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import customConfig from './config/custom.config';
       isGlobal: true,
       load: [customConfig],
     }),
+    PassportModule,
+    AuthModule,
     UserModule,
     PrismaModule,
     HomeModule,
