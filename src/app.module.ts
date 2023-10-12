@@ -6,9 +6,19 @@ import { PrismaModule } from './prisma/prisma.module';
 import { HomeModule } from './home/home.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UserInterceptor } from './user/interceptors/user.interceptor';
+import { ConfigModule } from '@nestjs/config';
+import customConfig from './config/custom.config';
 
 @Module({
-  imports: [UserModule, PrismaModule, HomeModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [customConfig],
+    }),
+    UserModule,
+    PrismaModule,
+    HomeModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

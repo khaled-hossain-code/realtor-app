@@ -8,6 +8,7 @@ import {
   MinLength,
   IsEnum,
   IsOptional,
+  Length,
 } from 'class-validator';
 
 export class SignupDto {
@@ -43,7 +44,7 @@ export class SigninDto {
   email: string;
 
   @IsString()
-  @MinLength(5)
+  @Length(5, 15, { message: 'password has to be between 5 & 15 characters' })
   @ApiProperty({
     description: 'The password the user.',
     example: 'asdf1234',

@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { UserType } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 interface SignupParams {
   name: string;
@@ -18,7 +19,10 @@ interface SigninParams {
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async signup(
     { email, password, name, phone }: SignupParams,
@@ -68,12 +72,13 @@ export class AuthService {
   }
 
   private generateJWT(id: number, name: string) {
+    console.log(this.configService.get<string>('JSON_TOKEN_KEY'));
     return jwt.sign(
       {
         name,
         id,
       },
-      process.env.JSON_TOKEN_KEY,
+      this.configService.get<string>('JSON_TOKEN_KEY'),
       {
         expiresIn: 3600000,
       },
