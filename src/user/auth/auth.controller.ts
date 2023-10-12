@@ -23,6 +23,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -72,7 +74,7 @@ export class AuthController {
   }
 
   @Post('/login')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @ApiResponse({
     status: 200,
     description: 'User signed in successfully',
@@ -103,7 +105,7 @@ export class AuthController {
       default: 'Bearer ',
     },
   })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   me(@User() user) {
     if (!user) {
       throw new NotFoundException();

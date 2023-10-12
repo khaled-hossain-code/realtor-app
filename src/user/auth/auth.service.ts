@@ -76,7 +76,7 @@ export class AuthService {
   generateJWT(id: number, name: string) {
     return this.jwtService.sign({
       username: name,
-      sub: id,
+      id,
     });
   }
 
