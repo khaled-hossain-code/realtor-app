@@ -33,6 +33,16 @@ export class AuthController {
 
   @Post('google')
   async handleGoogleSignIn(@Body() body: { accessToken: string }) {
+    const payload = {
+      google_id: '116377077107995107922',
+      provider: 'google',
+      name: 'Md Khaled Hossain',
+      email: 'md.khaled.eee@gmail.com',
+      image:
+        'https://lh3.googleusercontent.com/a/ACg8ocKEz8w0a9hIrKVoS87W7Twr3zCIw6Eu2wj8798Qe7h6ZoA=s96-c',
+      access_token:
+        'ya29.a0AfB_byBV19xNr4Xpm6N6YOPvqJa91aCoY1XW57pjCVOSI-mMID6dbaBV2detnRVIq9igmulZY2v8dHG6Tor8-jCNjnoDuEHmn49Deygvm9XZhFeutRwAc7hXUIdJiZFtDLQybUEgdlfYMWOgC5yaOmP2gtAQeoe9Lye6aCgYKAVkSARISFQGOcNnC8YAF8z7H9sz4Qji-rpIO4A0171',
+    };
     const googleApiUrl = 'https://www.googleapis.com/oauth2/v3/tokeninfo';
 
     const response = await fetch(
